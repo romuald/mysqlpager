@@ -1,74 +1,114 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Mysqlpager : Pager for mysql command line interface" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Mysqlpager by romuald</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Mysqlpager</title>
   </head>
-
   <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/romuald/mysqlpager">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/romuald/mysqlpager/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/romuald/mysqlpager/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/romuald/mysqlpager">View on GitHub</a>
+    <div class="wrapper">
 
-          <h1 id="project_title">Mysqlpager</h1>
-          <h2 id="project_tagline">Pager for mysql command line interface</h2>
+      <section>
+        <div id="title">
+          <h1>Mysqlpager</h1>
+          <p>Pager for mysql command line interface</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/romuald">romuald</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/romuald/mysqlpager/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/romuald/mysqlpager/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+        <h1>My <em>(sql)</em>  Pager</h1>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>Welcome to GitHub Pages.</h3>
+<p>.. contents:: :depth: 2</p>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>My(sql) Pager is a tool meant to be used with the MySQL and PostgreSQL command line clients on unix platforms.</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<p>It's goal is to ease the reading of resultsets, doing 2 things:</p>
+
+<ul>
+<li>coloring data (numbers, dates and NULLs)</li>
+<li>using the less command in case the output don't fit in the terminal</li>
+</ul><p>Here is a sample output:</p>
+
+<p>.. image:: <a href="http://chivil.com/mysqlpager/sample-colored.png">http://chivil.com/mysqlpager/sample-colored.png</a></p>
+
+<p>It currently requires perl 5.8, preferably with the <code>Term::ReadKey &lt;http://search.cpan.org/dist/TermReadKey/ReadKey.pm&gt;</code>_ module
+(should work without, using the <code>stty</code> command)</p>
+
+<p>Usage - MySQL</p>
+
+<hr><p>To use it you'll just have to tell your mysql client to use it as a pager::</p>
+
+<p>mysql&gt; pager /path/to/mypager.pl</p>
+
+<p>or edit your <code>~/.my.cnf</code> file::</p>
+
+<p>[mysql]
+      pager = /path/to/mypager.pl</p>
+
+<p>Usage - PostgreSQL</p>
+
+<hr><p>The script was originaly designed to work with MySQL, but an option exists in PostgreSQL client that format outputs as mypager expects it.</p>
+
+<p>You'll have to use the <code>PAGER</code> environment variable, for example::</p>
+
+<pre><code>export PAGER=/path/to/mypager.pl
+psql --stuff
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>Or in your <code>.bashrc</code> / <code>.zshrc</code>::</p>
 
-<h3>Designer Templates</h3>
+<pre><code>alias psql="PAGER=/path/to/mypager.pl psql"
+</code></pre>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>Then, you'll have to edit your <code>.psqlrc</code> file to set 2 default options::</p>
 
-<h3>Rather Drive Stick?</h3>
+<pre><code>-- Headers and surrounding pipes for columns
+\pset border 2
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+-- mypager will decide when to switch to less, but will always add color
+\pset pager always
 
-<h3>Authors and Contributors</h3>
+-- You may want null to be NULL, at your discretion
+-- \pset null NULL
+</code></pre>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>TODO</p>
 
-<h3>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<hr><ul>
+<li>document config options :p</li>
+<li>allow a <em>--install</em> like command line option to install default configuration</li>
+<li>be able to force the use (or not use) of less</li>
+<li>be able to use another pager using the $PAGER environment variable</li>
+<li>be able to disable / change colors</li>
+<li>works with perl &lt; v5.8.0 <em>(...or not)</em>
+</li>
+</ul>
       </section>
-    </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Mysqlpager maintained by <a href="https://github.com/romuald">romuald</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
     </div>
-
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
-
   </body>
 </html>
